@@ -1,6 +1,7 @@
 package com.brightkut.springjwt.config;
 
 import com.brightkut.springjwt.filter.JwtAuthenticationFilter;
+import com.brightkut.springjwt.filter.JwtTokenFilter;
 import com.brightkut.springjwt.service.UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,10 +25,12 @@ public class SecurityConfig {
 
     private final UserService userService;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final JwtTokenFilter jwtTokenFilter;
 
-    public SecurityConfig(UserService userService, JwtAuthenticationFilter jwtAuthenticationFilter) {
+    public SecurityConfig(UserService userService, JwtAuthenticationFilter jwtAuthenticationFilter, JwtTokenFilter jwtTokenFilter) {
         this.userService = userService;
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+        this.jwtTokenFilter = jwtTokenFilter;
     }
 
     @Bean
@@ -43,6 +46,7 @@ public class SecurityConfig {
                 )
                 .userDetailsService(userService)
                 .sessionManagement(session-> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .addFilterBefore(jwtTokenFilter, JwtTokenFilter.class)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
