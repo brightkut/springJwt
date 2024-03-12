@@ -6,11 +6,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class AdminController {
-
-    @PreAuthorize("hasAuthority('ADMIN')")
-    @GetMapping("/admin")
-    public ResponseEntity<String> getAdmin(){
-        return ResponseEntity.ok("Hi I'm Admin");
+public class NormalController {
+    @PreAuthorize("hasAnyAuthority('ADMIN','USER')")
+    @GetMapping("/normal")
+    public ResponseEntity<String> getNormalUser(){
+        return ResponseEntity.ok("Hi I'm user");
     }
 }
