@@ -90,6 +90,63 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Get Normal",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTcwNzk5NzAxNSwiZXhwIjoxNzA4MDgzNDE1fQ.HEYw-hFgKI-7R8PYgxs886c8xF-8KuEaz7HEuC9AZPclfoYqcg-M_tyK9geQNQ7U",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/admin",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"admin"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Refresh Token",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"refreshToken\": \"e61a4509-6b4b-495a-bac6-d21f6c8d8b8c\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/refreshToken",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"refreshToken"
+					]
+				}
+			},
+			"response": []
 		}
 	]
 }
