@@ -5,6 +5,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +17,9 @@ import java.util.function.Function;
 public class JwtService {
     //base64
     private final String SECRET_KEY = "295980db37e0792499daa34fc05281ea6102fc99dd8a7e971455795ff56aaab1";
+
+    @Value("${jwt.cookieExpiry}")
+    public static int cookieExpiry;
 
 
     public boolean isValid(String token , UserDetails user){

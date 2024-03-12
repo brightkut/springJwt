@@ -6,6 +6,9 @@ import com.brightkut.springjwt.entity.User;
 import com.brightkut.springjwt.repository.UserRepository;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.parameters.P;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -37,19 +40,24 @@ public class AuthenticationService {
     }
 
     public AuthenticationResponse authenticate(User request){
-        authenticationManager.authenticate(
+        Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getUsername(),
                         request.getPassword()
                 )
         );
 
-        User user = userRepository.findByUsername(request.getUsername()).orElseThrow();
+        if(authentication.isAuthenticated()){
+            User user = userRepository.findByUsername(request.getUsername()).orElseThrow();
 
-        String token = jwtService.generateToken(user);
+            String token = jwtService.generateToken(user);
 
-        RefreshToken refreshToken = refreshTokenService.createRefreshToken(request.getUsername());
+            RefreshToken refreshToken = refreshTokenService.createRefreshToken(request.getUsername());
 
-        return new AuthenticationResponse(token, refreshToken.getToken());
+            return new AuthenticationResponse(token, refreshToken.getToken());
+        }
+        else {
+            throw new UsernameNotFoundException("invalid user request..!!");
+        }
     }
 }

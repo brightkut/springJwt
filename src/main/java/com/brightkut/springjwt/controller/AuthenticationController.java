@@ -5,11 +5,16 @@ import com.brightkut.springjwt.entity.User;
 import com.brightkut.springjwt.service.AuthenticationService;
 import com.brightkut.springjwt.service.TokenBlacklist;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import static com.brightkut.springjwt.service.JwtService.cookieExpiry;
 
 @RestController
 public class AuthenticationController {
@@ -29,8 +34,20 @@ public class AuthenticationController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody User request){
-        return ResponseEntity.ok(authenticationService.authenticate(request));
+    public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody User request, HttpServletResponse response){
+        AuthenticationResponse authenticationResponse = authenticationService.authenticate(request);
+
+        ResponseCookie cookie = ResponseCookie.from("accessToken", authenticationResponse.token())
+                .httpOnly(true)
+                .secure(false)
+                .path("/")
+                .maxAge(cookieExpiry)
+                .build();
+
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+
+        return ResponseEntity.ok()
+                .body(authenticationResponse);
     }
 
     @PostMapping("/logout")

@@ -5,6 +5,8 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -13,6 +15,7 @@ import java.io.IOException;
 import static com.brightkut.springjwt.controller.AuthenticationController.extractTokenFromRequest;
 
 @Component
+@Order(Ordered.HIGHEST_PRECEDENCE)
 public class JwtTokenFilter extends OncePerRequestFilter {
     private final TokenBlacklist tokenBlacklist;
 
@@ -24,13 +27,13 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String token = extractTokenFromRequest(request);
 
-        if (token != null && !tokenBlacklist.isBlacklisted(token)) {
+        if (token != null && tokenBlacklist.isBlacklisted(token)) {
+            // Token is blacklisted or expired, deny access
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        } else {
             // Token is valid and not blacklisted
             // Proceed with request processing
             filterChain.doFilter(request, response);
-        } else {
-            // Token is blacklisted or expired, deny access
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         }
     }
 }
